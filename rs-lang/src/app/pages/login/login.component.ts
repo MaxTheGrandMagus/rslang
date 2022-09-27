@@ -12,6 +12,7 @@ import { UserTokenResponse, LoginUser } from '../../models/user.model';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  isLoading = false;
   form: LoginUser = {
     email: '',
     password: ''
@@ -36,6 +37,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     const { email, password } = this.form;
+    this.isLoading = true;
     this.authService.login({ email, password }).subscribe({
       next: (data: UserTokenResponse) => {
         this.storageService.saveToken(data.token)
@@ -43,16 +45,14 @@ export class LoginComponent implements OnInit {
         this.storageService.saveUser(data);
         this.isLoginFailed = false;
         this.isLoggedIn = true;
+        this.isLoading = false;
         this.navigateAndReload();
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = err.message;
-        if (err.status === 403) {
-          this.toastr.error('Incorrect e-mail or password');
-        } else {
-          this.toastr.error(this.errorMessage);
-        }
+        this.isLoading = false;
         this.isLoginFailed = true;
+        this.errorMessage = err.error;
+        this.toastr.error(this.errorMessage);
       }
     });
   }

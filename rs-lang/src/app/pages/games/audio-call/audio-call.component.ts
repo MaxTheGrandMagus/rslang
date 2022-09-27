@@ -1,19 +1,19 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { SprintGameService } from '../../../services/sprintgame.service';
-import { StatisticsService } from '../../../services/statistics.service';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { lastValueFrom, of, Subscription, take, timer } from 'rxjs';
+import { SprintGameService } from '../../../services/sprintgame.service';
 import { StorageService } from '../../../services/storage.service';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { StatisticsService } from '../../../services/statistics.service';
 import { ResultFormComponent } from '../result-form/result-form.component';
 import { Word } from '../../../models/words.model';
-import { ActivatedRoute } from '@angular/router';
 import { UserAggregatedWordResponse } from '../../../models/user-aggregated-word-response.model';
 import { UserAggregatedWord } from '../../../models/user-aggregated-word.model';
 import { UserWord } from '../../../models/user-word.model';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FooterService } from '../../components/footer/footer.service';
+import { BASE_URL } from './../../../constants/api';
 
-const BASE_URL = 'https://rss-rslang-be.herokuapp.com/';
 const GAME_TIME = 10;
 const rightAnswerSound = '/assets/sounds/positive-beep.mp3';
 const wrongAnswerSound = '/assets/sounds/negative-beep.mp3';
@@ -60,12 +60,12 @@ export class AudioCallComponent implements OnInit, OnDestroy {
   flag = false;
 
   constructor(
-    private sprintGameService: SprintGameService,
     private http: HttpClient,
-    public dialog: MatDialog,
-    private storageService: StorageService,
     private route: ActivatedRoute,
+    private sprintGameService: SprintGameService,
+    private storageService: StorageService,
     private statisticsService: StatisticsService,
+    public dialog: MatDialog,
     private footerService: FooterService
   ) {}
 
@@ -114,7 +114,7 @@ export class AudioCallComponent implements OnInit, OnDestroy {
     if (this.words.length === 0) {
       if (this.userId) {
         const queryParams = `users/${this.userId}/aggregatedWords?group=${this.difficulty}&page=${wordsPage}&wordsPerPage=${this.cardsPerPage}`;
-        const url = `${BASE_URL}${queryParams}`;
+        const url = `${BASE_URL}/${queryParams}`;
         const data = this.http.get<UserAggregatedWordResponse[]>(url);
         const wordsReaponse = await lastValueFrom(data);
 
@@ -129,7 +129,7 @@ export class AudioCallComponent implements OnInit, OnDestroy {
         }
       } else {
         const queryParams = `?group=${this.difficulty}&page=${wordsPage}`;
-        const url = `${BASE_URL}words${queryParams}`;
+        const url = `${BASE_URL}/words${queryParams}`;
         const data = this.http.get<Word[]>(url);
         const wordsReaponse = await lastValueFrom(data);
         this.words = wordsReaponse;
@@ -163,7 +163,7 @@ export class AudioCallComponent implements OnInit, OnDestroy {
       newPage = Math.floor(Math.random() * (this.numberOfPages - 1));
     } while (currentPage === newPage);
 
-    const data = this.http.get<Word[]>(`${BASE_URL}words?group=${this.difficulty}&page=${newPage}`);
+    const data = this.http.get<Word[]>(`${BASE_URL}/words?group=${this.difficulty}&page=${newPage}`);
     const words = await lastValueFrom(data);
 
     const wrongWords = new Set<string>();
@@ -175,7 +175,7 @@ export class AudioCallComponent implements OnInit, OnDestroy {
   }
 
   getSound() {
-    const sound = new Audio(`${BASE_URL}${this.currentWord?.audio}`);
+    const sound = new Audio(`${BASE_URL}/${this.currentWord?.audio}`);
     sound.play();
   }
 
@@ -186,7 +186,7 @@ export class AudioCallComponent implements OnInit, OnDestroy {
         this.gameOver();
       } else {
         this.results.push(word);
-        this.audio = `${BASE_URL}${word.audio}`;
+        this.audio = `${BASE_URL}/${word.audio}`;
         this.englishWord = word.word;
         this.russianWord = word.wordTranslate;
         this.setGameTimer();

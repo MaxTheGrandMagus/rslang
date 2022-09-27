@@ -1,11 +1,11 @@
-<div *ngIf="!isLoaded" class="progress-spinner-container">
+<div *ngIf="isLoading" class="progress-spinner-container">
   <mat-progress-spinner
     class="example-margin"
     color="#9b59b6"
     mode="indeterminate">
   </mat-progress-spinner>
 </div>
-<div *ngIf="isLoaded" class="profile-container">
+<div *ngIf="!isLoading" class="profile-container">
   <h1 class="title">Редактировать профиль</h1>
   <form
     class="form"

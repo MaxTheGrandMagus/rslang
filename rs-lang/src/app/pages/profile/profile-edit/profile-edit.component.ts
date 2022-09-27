@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./profile-edit.component.scss']
 })
 export class ProfileEditComponent implements OnInit, OnDestroy {
-  isLoaded = false;
+  isLoading = false;
   userId: string | undefined = '';
   userData: UserProfile = {
     id: '',
@@ -36,14 +36,16 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userId = this.storageService.getUser()?.userId;
     if (this.userId) {
+      this.isLoading = true;
       this.userService.getUser(this.userId).subscribe({
         next: (data: UserProfile) => {
+          this.isLoading = false;
           this.userData = structuredClone(data);
           this.form.email = this.userData.email;
-          this.isLoaded = true;
         },
         error: (err: HttpErrorResponse) => {
-          this.errorMessage = err.message;
+          this.isLoading = false;
+          this.errorMessage = err.error;
           this.toastr.error(this.errorMessage);
         }
       })
@@ -53,13 +55,16 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     const { email, password, confirmPassword } = this.form;
     if (this.userId) {
+      this.isLoading = true;
       if (password === confirmPassword) {
         this.userService.updateUser(this.userId, email, password).subscribe({
           next: () => {
+            this.isLoading = false;
             this.router.navigate(['/profile'])
           },
           error: (err: HttpErrorResponse) => {
-            this.errorMessage = err.message;
+            this.isLoading = false;
+            this.errorMessage = err.error;
             if (err.status === 403) {
               this.toastr.error('Incorrect e-mail or password');
             } else {
@@ -72,6 +77,6 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.isLoaded = false;
+    this.isLoading = false;
   }
 }

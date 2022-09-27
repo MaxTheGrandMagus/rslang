@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  isLoaded = false;
+  isLoading = false;
   userId: string | undefined = '';
   userData: UserProfile = {
     id: '',
@@ -31,13 +31,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userId = this.storageService.getUser()?.userId;
     if (this.userId) {
+      this.isLoading = true;
       this.userService.getUser(this.userId).subscribe({
         next: (data: UserProfile) => {
+          this.isLoading = false;
           this.userData = structuredClone(data);
-          this.isLoaded = true;
         },
         error: (err: HttpErrorResponse) => {
-          this.errorMessage = err.message;
+          this.isLoading = false;
+          this.errorMessage = err.error;
           this.toastr.error(this.errorMessage);
         }
       })
@@ -47,12 +49,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   onDelete(): void {
     this.userId = this.storageService.getUser()?.userId;
     if (this.userId) {
+      this.isLoading = true;
       this.userService.deleteUser(this.userId).subscribe({
         next: () => {
           this.logout();
         },
         error: (err: HttpErrorResponse) => {
-          this.errorMessage = err.message;
+          this.isLoading = false;
+          this.errorMessage = err.error;
           this.toastr.error(this.errorMessage);
         }
       })
@@ -64,10 +68,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.router.navigate(['/'])
       .then(() => {
         window.location.reload();
+        this.isLoading = false;
       });
   }
 
   ngOnDestroy(): void {
-    this.isLoaded = false;
+    this.isLoading = false;
   }
 }

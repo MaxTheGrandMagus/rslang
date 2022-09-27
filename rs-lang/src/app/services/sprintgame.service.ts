@@ -5,13 +5,12 @@ import { Word } from '../models/words.model';
 import { UserAggregatedWord } from '../models/user-aggregated-word.model';
 import { UserWordResponse } from '../models/user-word-response.model';
 import { UserWord } from '../models/user-word.model';
+import { BASE_URL } from '../constants/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SprintGameService {
-  private BASE_URL = 'https://rss-rslang-be.herokuapp.com/';
-
   constructor(private http: HttpClient) {}
 
   public difficulty$ = new Subject<number>();
@@ -29,13 +28,13 @@ export class SprintGameService {
 
   createUserWord(userId: string, wordId: string | undefined, params: UserWord): Observable<UserWordResponse> {
     const queryParams = `users/${userId}/words/${wordId}`;
-    const url = `${this.BASE_URL}${queryParams}`;
+    const url = `${BASE_URL}/${queryParams}`;
     return this.http.post<UserWordResponse>(url, params);
   }
 
   updateUserWord(userId: string, wordId: string | undefined, params: UserWord): Observable<UserWordResponse> {
     const queryParams = `users/${userId}/words/${wordId}`;
-    const url = `${this.BASE_URL}${queryParams}`;
+    const url = `${BASE_URL}/${queryParams}`;
     return this.http.put<UserWordResponse>(url, params);
   }
 

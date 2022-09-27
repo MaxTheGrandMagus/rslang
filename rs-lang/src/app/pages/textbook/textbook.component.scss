@@ -1,5 +1,12 @@
 @import "../../shared/css/variables";
 
+.progress-spinner-container {
+  width: 100%;
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .textbook {
   background-color: #f6f5f7;
   padding: 20px;
@@ -83,7 +90,7 @@
   flex: 0.7;
 }
 
-.games-buttons.disabled button { 
+.games-buttons.disabled button {
   background-color: $color-grey;
   cursor: default;
   pointer-events: none;
@@ -133,7 +140,7 @@
   background-color: $color-violet-btn;
 }
 
-.sprint-btn:hover { 
+.sprint-btn:hover {
   background-color: $color-violet-btn-hover;
 }
 
@@ -141,7 +148,7 @@
   background-color: $color-pink;
 }
 
-.audio-call-btn:hover { 
+.audio-call-btn:hover {
   background-color: $color-pink-darker;
 }
 

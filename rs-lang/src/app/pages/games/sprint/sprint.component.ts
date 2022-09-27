@@ -12,8 +12,8 @@ import { UserWord } from '../../../models/user-word.model';
 import { UserAggregatedWord } from '../../../models/user-aggregated-word.model';
 import { UserAggregatedWordResponse } from '../../../models/user-aggregated-word-response.model';
 import { FooterService } from '../../components/footer/footer.service';
+import { BASE_URL } from '../../../constants/api';
 
-const BASE_URL = 'https://rss-rslang-be.herokuapp.com/';
 const GAME_TIME = 60;
 const rightAnswerSound = '/assets/sounds/positive-beep.mp3';
 const wrongAnswerSound = '/assets/sounds/negative-beep.mp3';
@@ -137,7 +137,7 @@ export class SprintComponent implements OnInit, OnDestroy {
     if (this.words.length === 0) {
       if (this.userId) {
         const queryParams = `users/${this.userId}/aggregatedWords?group=${this.difficulty}&page=${wordsPage}&wordsPerPage=${this.cardsPerPage}`;
-        const url = `${BASE_URL}${queryParams}`;
+        const url = `${BASE_URL}/${queryParams}`;
         const data = this.http.get<UserAggregatedWordResponse[]>(url);
         const wordsReaponse = await lastValueFrom(data);
 
@@ -152,7 +152,7 @@ export class SprintComponent implements OnInit, OnDestroy {
         }
       } else {
         const queryParams = `?group=${this.difficulty}&page=${wordsPage}`;
-        const url = `${BASE_URL}words${queryParams}`;
+        const url = `${BASE_URL}/words${queryParams}`;
         const data = this.http.get<Word[]>(url);
         this.words = await lastValueFrom(data);
       }
@@ -170,7 +170,7 @@ export class SprintComponent implements OnInit, OnDestroy {
 
       while (answer === this.currentWord.wordTranslate || !answer) {
         const page = Math.floor(Math.random() * (this.numberOfPages - 1));
-        const data = this.http.get<Word[]>(`${BASE_URL}words?group=${this.difficulty}&page=${page}`);
+        const data = this.http.get<Word[]>(`${BASE_URL}/words?group=${this.difficulty}&page=${page}`);
         const fakeWords = await lastValueFrom(data);
         const fakeWord = Math.floor(Math.random() * (this.cardsPerPage - 1));
         answer = fakeWords[fakeWord].wordTranslate;
@@ -198,11 +198,11 @@ export class SprintComponent implements OnInit, OnDestroy {
 
     if (!word) {
       this.gameOver();
-    } else { 
+    } else {
       this.results.push(word);
-      this.audio = `${BASE_URL}${word.audio}`;
+      this.audio = `${BASE_URL}/${word.audio}`;
       this.englishWord = word.word;
-  
+
       if (word.fakeTranslate) {
         this.russianWord = word.fakeTranslate;
         this.fakeTranslate = true;
@@ -216,14 +216,14 @@ export class SprintComponent implements OnInit, OnDestroy {
   checkAnswer(answer: string) {
     this.isAnswer = true;
     setTimeout(() => this.isAnswer = false, 300);
-    
+
     const currentWord = this.currentWord as UserAggregatedWord;
 
     if (answer === 'Yes') {
       if (!this.fakeTranslate) {
         const sound = new Audio(rightAnswerSound);
         sound.play();
-        
+
         this.results[this.results.length - 1].answer = true;
         this.isMistake = false;
 
@@ -258,7 +258,7 @@ export class SprintComponent implements OnInit, OnDestroy {
         } else if (this.correctSeries > 6) {
           this.score += 70;
         }
-        
+
         this.results[this.results.length - 1].answer = true;
         const sound = new Audio(rightAnswerSound);
         sound.play();

@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Word } from 'src/app/pages/textbook/models/word.model';
 import { UserAggregatedWord } from '../../models/user-aggregated-word.model';
+import { BASE_URL } from '../../../../constants/api';
 
 @Component({
   selector: 'app-word-card',
@@ -18,7 +19,6 @@ export class WordCardComponent {
   @Output() hardWordDeleteClick = new EventEmitter<UserAggregatedWord>();
   @Output() learnedWordDeleteClick = new EventEmitter<UserAggregatedWord>();
   @Output() learnedWordAddClick = new EventEmitter<UserAggregatedWord>();
-  baseUrl = 'https://rss-rslang-be.herokuapp.com/';
 
   onSoundIconClick(word?: Word | UserAggregatedWord): void {
     this.soundIconClick.emit(word);
@@ -41,7 +41,7 @@ export class WordCardComponent {
   }
 
   getImagePath() {
-    return `${this.baseUrl}${this.word?.image}`;
+    return `${BASE_URL}/${this.word?.image}`;
   }
 
   getWrongAnswers() {

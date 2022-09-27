@@ -12,6 +12,7 @@ import { User } from '../../models/user.model';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  isLoading = false;
   form: User = {
     name: '',
     email: '',
@@ -36,22 +37,19 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     const { name, email, password } = this.form;
+    this.isLoading = true;
     this.authService.register({ name, email, password }).subscribe({
       next: () => {
+        this.isLoading = false;
         this.isSuccessful = true;
         this.isSignUpFailed = false;
-        this.router.navigate(['/login'])
+        this.router.navigate(['/login']);
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = err.message;
-        if (err.status === 403 || err.status === 422) {
-          this.toastr.error('Incorrect e-mail or password');
-        } else if (err.status === 417) {
-          this.toastr.error('User with this e-mail exists');
-        } else {
-          this.toastr.error(this.errorMessage);
-        }
+        this.isLoading = false;
         this.isSignUpFailed = true;
+        this.errorMessage = err.error;
+        this.toastr.error(this.errorMessage);
       }
     });
   }

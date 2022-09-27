@@ -10,6 +10,7 @@ import { WordService } from './services/word.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { BASE_URL } from '../../constants/api';
 
 @Component({
   selector: 'app-textbook',
@@ -32,7 +33,7 @@ export class TextbookComponent implements OnInit, OnDestroy, AfterViewInit {
   isHardWordsChecked = localStorage.getItem('isHardWordsChecked') === 'true' || false;
   requestBody?: UserWord;
   paginatorLabel?: HTMLElement;
-  baseUrl = 'https://rss-rslang-be.herokuapp.com/';
+  isLoading = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -87,20 +88,28 @@ export class TextbookComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getWords(): void {
-    this.wordService.getWords(this.category, this.page).subscribe((words) => (this.words = words));
+    this.isLoading = true;
+    this.wordService.getWords(this.category, this.page).subscribe((words) => {
+      this.words = words;
+      this.isLoading = false;
+    });
   }
 
   getUserAggregatedWords(): void {
+    this.isLoading = true;
     this.wordService
       .getUserAggregatedWords(this.userId, this.category, this.page, this.cardsPerPage)
       .subscribe((words) => {
+        this.isLoading = false;
         this.calculateLearnedWords(words[0].paginatedResults);
         this.words = words[0].paginatedResults;
       });
   }
 
   getUserAggregatedHardWords(): void {
+    this.isLoading = true;
     this.wordService.getUserAggregatedHardWords(this.userId).subscribe((words) => {
+      this.isLoading = false;
       this.calculateLearnedWords(words[0].paginatedResults);
       this.words = words[0].paginatedResults;
     });
@@ -119,9 +128,9 @@ export class TextbookComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSoundIconClick(word: Word): void {
     this.soundsToPlay = [
-      `${this.baseUrl}${word.audio}`,
-      `${this.baseUrl}${word.audioMeaning}`,
-      `${this.baseUrl}${word.audioExample}`,
+      `${BASE_URL}/${word.audio}`,
+      `${BASE_URL}/${word.audioMeaning}`,
+      `${BASE_URL}/${word.audioExample}`,
     ];
     this.playSounds(this.soundsToPlay);
   }

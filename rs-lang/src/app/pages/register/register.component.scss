@@ -1,5 +1,12 @@
 @import "../../shared/css/variables";
 
+.progress-spinner-container {
+  width: 100%;
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .register-container {
   display: flex;
   flex-direction: column;

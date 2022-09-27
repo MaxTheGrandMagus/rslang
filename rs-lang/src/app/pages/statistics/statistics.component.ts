@@ -13,7 +13,7 @@ import { ChartDataset, ChartOptions } from 'chart.js';
   styleUrls: ['./statistics.component.scss']
 })
 export class StatisticsComponent implements OnInit {
-  isLoaded = false;
+  isLoading = false;
   userId: string | undefined = ''
   errorMessage = '';
   statisticsData: Statistics = {
@@ -97,15 +97,16 @@ export class StatisticsComponent implements OnInit {
   ngOnInit(): void {
     this.userId = this.storageService.getUser()?.userId
     if (this.userId) {
+      this.isLoading = true;
       this.statisticsService.getUserStatistics(this.userId).subscribe({
         next: (data: stringifiedNewBody) => {
+          this.isLoading = false;
           this.statisticsData = {
             learnedWords: data.learnedWords,
             optional: {
               allStatisticsByDate: JSON.parse(data.optional.allStatisticsByDate),
             }
           };
-          this.isLoaded = true;
           this.allTimeStatistics = structuredClone(this.statisticsData.optional.allStatisticsByDate.map((item) => {
             return {
               date: item.date,
@@ -141,18 +142,15 @@ export class StatisticsComponent implements OnInit {
           }
         },
         error: (err: HttpErrorResponse) => {
-          this.errorMessage = err.message;
+          this.isLoading = false;
+          this.errorMessage = err.error;
           if (err.status === 404) {
             this.toastr.info('Статистика отсутствует, пожалуйста сыграйте в игру');
           } else {
             this.toastr.error(this.errorMessage);
           }
-          this.isLoaded = true;
         }
       })
-    }
-    if (!this.userId && !this.isLoaded) {
-      this.isLoaded = true;
     }
   }
 }

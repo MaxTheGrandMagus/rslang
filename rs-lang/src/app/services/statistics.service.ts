@@ -5,8 +5,7 @@ import { StorageService } from './storage.service';
 import { StatisticByDate, Statistics, defaultStatistics, stringifiedNewBody } from '../models/statistics.model';
 import { UserAggregatedWord } from '../models/user-aggregated-word.model';
 import { isToday } from '../utils/statistics';
-
-const STATISTICS_URL = 'https://rss-rslang-be.herokuapp.com/users/';
+import { BASE_URL } from '../constants/api';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +19,7 @@ export class StatisticsService {
   ) { }
 
   getUserStatistics(id: string): Observable<any> {
-    return this.http.get<stringifiedNewBody>(`${STATISTICS_URL}${id}/statistics`, {
+    return this.http.get<stringifiedNewBody>(`${BASE_URL}/users/${id}/statistics`, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.storageService.getToken()}`
@@ -29,7 +28,7 @@ export class StatisticsService {
   }
 
   updateUserStatistics(id: string, statistics: stringifiedNewBody): Observable<any> {
-    return this.http.put(`${STATISTICS_URL}${id}/statistics`, statistics, {
+    return this.http.put(`${BASE_URL}/users/${id}/statistics`, statistics, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.storageService.getToken()}`

@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import { Word } from '../../../models/words.model';
 import { ResultData } from '../../../models/result-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-
-const BASE_URL = 'https://rss-rslang-be.herokuapp.com/';
+import { BASE_URL } from '../../../constants/api';
 
 @Component({
   selector: 'app-result-form',
@@ -34,7 +33,7 @@ export class ResultFormComponent implements OnInit, AfterViewChecked {
   }
 
   playSound(soundLink: string) {
-    const sound = new Audio(`${BASE_URL}${soundLink}`);
+    const sound = new Audio(`${BASE_URL}/${soundLink}`);
     sound.play();
   }
 
