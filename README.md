@@ -6,11 +6,15 @@
 
 [https://rslang-max.netlify.app/](https://rslang-max.netlify.app/)
 
+<h2>🗄️ Backend deploy</h2>
+
+[https://rss-rslang-be.herokuapp.com/doc/](https://rss-rslang-be.herokuapp.com/doc/)
+
 <h2>Project Screenshots:</h2>
 
 <img src="https://i.ibb.co/NVVwyqq/Screenshot-2022-10-01-at-21-13-27-Rs-Lang.png" alt="project-screenshot" width="auto" height="100%">
 
-<h2>Stack used:</h2>
+<h2>🛢️ Stack used:</h2>
 
 <div>
 <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff&style=for-the-badge" alt="TypeScript Badge">
